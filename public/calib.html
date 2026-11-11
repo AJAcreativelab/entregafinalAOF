@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>calib</title>
+<style>
+  html,body{margin:0;background:#111;height:100%;overflow:hidden;font:600 13px/1 monospace}
+  #v{position:absolute;inset:0;overflow:hidden}
+  #img{position:absolute;transform-origin:0 0}
+  .g{position:absolute;background:rgba(0,255,200,.35)}
+  .g5{background:rgba(255,220,0,.85)}
+  .lb{position:absolute;color:#ff0;background:#000a;padding:1px 2px}
+</style></head>
+<body><div id="v"><img id="img"></div>
+<script>
+// #src=...&x0=..&x1=..&y0=..&y1=..&step=1  (coordenadas en % de la imagen)
+const p=new URLSearchParams(location.hash.slice(1));
+const src=p.get('src'), x0=+p.get('x0'), x1=+p.get('x1'), y0=+p.get('y0'), y1=+p.get('y1'), st=+(p.get('step')||1);
+const img=document.getElementById('img'), v=document.getElementById('v');
+img.onload=()=>{
+  const W=img.naturalWidth, H=img.naturalHeight, vw=innerWidth, vh=innerHeight;
+  const cw=(x1-x0)/100*W, ch=(y1-y0)/100*H, s=Math.min(vw/cw, vh/ch);
+  img.style.width=W+'px'; img.style.transform=`scale(${s}) translate(${-x0/100*W}px,${-y0/100*H}px)`;
+  const X=x=>(x-x0)/100*W*s, Y=y=>(y-y0)/100*H*s;
+  for(let x=Math.ceil(x0/st)*st;x<=x1;x+=st){const d=document.createElement('div');d.className='g'+(x%5===0?' g5':'');d.style.cssText+=`left:${X(x)}px;top:0;width:1px;height:${Y(y1)}px`;v.appendChild(d); if(x%5===0){const l=document.createElement('div');l.className='lb';l.textContent=x;l.style.left=X(x)+2+'px';l.style.top='2px';v.appendChild(l)}}
+  for(let y=Math.ceil(y0/st)*st;y<=y1;y+=st){const d=document.createElement('div');d.className='g'+(y%5===0?' g5':'');d.style.cssText+=`top:${Y(y)}px;left:0;height:1px;width:${X(x1)}px`;v.appendChild(d); if(y%5===0){const l=document.createElement('div');l.className='lb';l.textContent=y;l.style.top=Y(y)+2+'px';l.style.left='2px';v.appendChild(l)}}
+};
+img.src=src;
+</script></body></html>

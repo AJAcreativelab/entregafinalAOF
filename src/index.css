@@ -1,0 +1,579 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   CLINICAL CASE FILE — Design tokens  ·  v2
+   --------------------------------------------------------------------------
+   Dos registros cromáticos que alternan con intención narrativa:
+   · CLÍNICO (luz)  — grises fríos de laboratorio: evaluación, datos, rigor.
+   · ÍNTIMO (noche) — negro cálido + crema: apertura técnica, resultados, cierre.
+   Un único acento — damasco — con un significado fijo en todo el proyecto:
+   "esto corresponde a la paciente" (clasificaciones, hallazgos, anotaciones).
+   ========================================================================== */
+
+@theme {
+  /* Registro clínico */
+  --color-paper: #e9eff3;
+  --color-paper-2: #f8f9fa;
+  --color-paper-3: #d6d9dd;
+  --color-ink: #1d1f23;
+  /* grises secundarios reforzados para proyección (contraste AA sobre papel) */
+  --color-ink-2: #2c2f34;
+  --color-stone: #474b52;
+  --color-stone-2: #7a7e85;
+  --color-line: #cbced3;
+
+  /* Registro íntimo */
+  --color-night: #0f0f0f;
+  --color-night-2: #1a1a1a;
+  --color-night-3: #262626;
+  --color-cream: #f7ead4;
+  --color-sand: #ebd4ad;
+
+  /* Acento: damasco (superficie) y su versión tostada (texto sobre claro) */
+  --color-accent: #a4551b;
+  --color-accent-2: #ffbc6a;
+  --color-accent-soft: #fde4c4;
+
+  /* Placeholders y anotaciones */
+  --color-film: #141414;
+  --color-film-2: #1d1d1d;
+  --color-annot: #f7ead4;
+
+  /* Tipografía
+     Display + texto: Familjen Grotesk — grotesca de contraste sutil y ritmo
+     ligeramente condensado; con tracking negativo gana tensión editorial.
+     Acento: Bodoni Moda Italic (óptica variable) — sólo palabras puntuales.
+     Datos: Fragment Mono — monoespaciada humanista, cifras tabulares. */
+  --font-display: 'Familjen Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Familjen Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Bodoni Moda Variable', 'Didot', 'Bodoni 72', serif;
+  --font-mono: 'Fragment Mono', ui-monospace, monospace;
+
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --header-h: 64px;
+  --gutter: clamp(16px, 4vw, 72px);
+  color-scheme: light;
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01' 1, 'cv11' 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-padding-top: var(--header-h);
+  /* Escala fluida: 16px en laptop → 19px en proyección 1920×1080 */
+  font-size: clamp(15px, 0.55vw + 8.5px, 19px);
+}
+
+html.presenting {
+  font-size: clamp(16px, 0.62vw + 9px, 21px);
+  --header-h: 0px;
+}
+html.presenting.idle,
+html.presenting.idle * {
+  cursor: none !important;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-accent-2);
+  color: var(--color-night);
+}
+
+/* --------------------------------------------------------------------------
+   Jerarquía tipográfica
+   -------------------------------------------------------------------------- */
+.font-display {
+  font-weight: 560;
+  letter-spacing: -0.035em;
+}
+
+.t-hero {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(3.4rem, 9vw, 11rem);
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+}
+.t-chapter {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(2.8rem, 6.2vw, 7.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+.t-title {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(2rem, 3.4vw, 3.9rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+.t-subtitle {
+  font-family: var(--font-display);
+  font-weight: 540;
+  font-size: clamp(1.4rem, 1.8vw, 2.05rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+.t-body {
+  font-size: 1.08rem;
+  line-height: 1.58;
+  color: var(--color-ink-2);
+  letter-spacing: -0.005em;
+}
+.t-lead {
+  font-size: clamp(1.12rem, 1.3vw, 1.45rem);
+  line-height: 1.45;
+  letter-spacing: -0.012em;
+  color: var(--color-ink-2);
+}
+.t-label {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.t-data {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  letter-spacing: 0;
+}
+
+/* Contrapunto serif: toda palabra en cursiva dentro de un titular pasa a Bodoni.
+   La óptica variable ajusta el contraste al tamaño de uso. */
+.t-hero .italic,
+.t-chapter .italic,
+.t-title .italic,
+.t-subtitle .italic,
+.font-display.italic,
+.font-display .italic,
+.t-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 96;
+}
+.t-hero .italic {
+  letter-spacing: -0.035em;
+}
+
+.wrap {
+  padding-inline: var(--gutter);
+  max-width: 1760px;
+  margin-inline: auto;
+}
+
+.rule {
+  height: 1px;
+  background: var(--color-line);
+}
+
+/* Placeholder: película sin revelar, retícula técnica muy tenue */
+.film-grid {
+  background-color: var(--color-film);
+  background-image:
+    linear-gradient(rgba(247, 234, 212, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 234, 212, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.annot-shadow {
+  filter: drop-shadow(0 0 1.5px rgba(10, 10, 10, 0.8));
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--color-accent-2);
+  outline-offset: 3px;
+}
+
+/* Registro íntimo: secciones en negro cálido.
+   Re-mapea los tokens claros para que los componentes compartidos funcionen igual. */
+.tone-night {
+  --color-paper: #0f0f0f;
+  --color-paper-2: #1a1a1a;
+  --color-paper-3: #262626;
+  --color-ink: #f7ead4;
+  --color-ink-2: rgba(247, 234, 212, 0.94);
+  --color-stone: rgba(247, 234, 212, 0.8);
+  --color-stone-2: rgba(247, 234, 212, 0.52);
+  --color-line: rgba(247, 234, 212, 0.16);
+  --color-accent: #ffbc6a;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Limita una foto vertical (≈4:5) a la altura útil de la pantalla de proyección */
+.fit-screen {
+  width: 100%;
+  max-width: calc((100svh - var(--header-h) - 9rem) * 0.8);
+  margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Escala de los paneles del leporello: se mide contra el ALTO de pantalla,
+   porque en la tira horizontal el alto es la dimensión que manda.
+   -------------------------------------------------------------------------- */
+.p-hero {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(3rem, 12.5cqh, 10rem);
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+}
+.p-title {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(1.9rem, 5.4cqh, 4.3rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+.p-sub {
+  font-family: var(--font-display);
+  font-weight: 540;
+  font-size: clamp(1.3rem, 3cqh, 2.3rem);
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+}
+.p-text {
+  font-size: clamp(1.12rem, 2.25cqh, 1.5rem);
+  line-height: 1.5;
+  color: var(--color-ink-2);
+}
+.p-hero .italic,
+.p-title .italic,
+.p-sub .italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 96;
+}
+.p-pad {
+  padding: clamp(1rem, 2.6cqh, 2.4rem);
+}
+
+/* Móvil: las páginas del leporello se apilan y sus grillas pasan a una columna */
+@media (max-width: 1023px) {
+  .strip-v .grid:not(.keep-grid) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: none !important;
+  }
+  .strip-v .p-pad {
+    padding: 1.5rem 1rem 2rem;
+  }
+}
+
+/* ==========================================================================
+   LEPORELLO — escenario, páginas, luz y libro (valores en MOTION.md)
+   ========================================================================== */
+.lp-stage {
+  background: transparent;
+}
+.lp-page {
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  --sc: 35, 42, 51;
+  --gnd: 0.1;
+  --pt: 0;
+  --rim: 0;
+  --ao: 0.12;
+}
+.lp-page.lp-bare {
+  background: #eef0f2;
+}
+.lp-page.lp-dark {
+  background: #18191b;
+  --gnd: 0.16;
+  --rim: 0.35;
+  --ao: 0.55;
+  --sc: 0, 0, 0;
+}
+.lp-page.lp-even {
+  --pt: 0.06;
+}
+.lp-page.lp-dark.lp-even {
+  --pt: 0.12;
+}
+.lp-pg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  overflow: hidden;
+  container-type: size;
+}
+/* Luz de un softbox cenital: tono plano por página, pares un paso más oscuras,
+   leve degradé de suelo y un filo de luz en el canto superior de las oscuras */
+.lp-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, var(--rim)) 0, rgba(255, 255, 255, 0) 2px),
+    linear-gradient(0deg, rgba(var(--sc), var(--gnd)) 0, rgba(var(--sc), 0) 46%),
+    linear-gradient(rgba(var(--sc), var(--pt)), rgba(var(--sc), var(--pt))),
+    linear-gradient(90deg, rgba(var(--sc), var(--ao)) 0, rgba(var(--sc), 0) 7%, rgba(var(--sc), 0) 93%, rgba(var(--sc), var(--ao)) 100%);
+}
+.lp-sheet .lp-shade,
+.lp-sheet .lp-foot {
+  display: none;
+}
+/* Sombras sobre el piso (hijas de cada página: siguen su pliegue en 3D)
+   · contacto: núcleo oscuro pegado a la base, difuminado hacia afuera
+   · proyectada: más amplia y suave, desplazada hacia el espectador (luz arriba-izquierda) */
+.lp-foot {
+  position: absolute;
+  left: -3%;
+  width: 106%;
+  height: 90px;
+  bottom: -45px;
+  pointer-events: none;
+  transform: rotateX(90deg);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(8, 9, 10, 0.78) 0%, rgba(8, 9, 10, 0.42) 38%, rgba(8, 9, 10, 0) 74%);
+}
+.lp-foot::after {
+  content: '';
+  position: absolute;
+  left: 4%;
+  width: 112%;
+  top: 30%;
+  height: 340%;
+  background: radial-gradient(50% 50% at 46% 40%, rgba(10, 11, 12, 0.42) 0%, rgba(10, 11, 12, 0.18) 42%, rgba(10, 11, 12, 0) 72%);
+  filter: blur(6px);
+}
+.lp-dark .lp-foot::after {
+  background: radial-gradient(50% 50% at 46% 40%, rgba(6, 7, 8, 0.5) 0%, rgba(6, 7, 8, 0.2) 42%, rgba(6, 7, 8, 0) 72%);
+}
+/* Libro cerrado */
+.lp-book {
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+.lp-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+.lp-face-back {
+  transform: translateZ(calc(var(--bt) / 2));
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+}
+.lp-face-front {
+  transform: rotateY(180deg) translateZ(calc(var(--bt) / 2));
+  background: var(--color-paper-2);
+}
+.lp-edge {
+  position: absolute;
+  backface-visibility: hidden;
+  --stripes: repeating-linear-gradient(90deg, #f8f9fa 0 2px, #d9dce0 2px 3px, #18191b 3px 4px, #cfd2d6 4px 5px);
+}
+.lp-edge-l,
+.lp-edge-r {
+  top: 0;
+  height: 100%;
+  width: var(--bt);
+  background: var(--stripes);
+}
+.lp-edge-l {
+  left: calc(var(--bt) / -2);
+  transform: rotateY(-90deg);
+}
+.lp-edge-r {
+  left: calc(100% - var(--bt) / 2);
+  transform: rotateY(90deg);
+}
+.lp-edge-t,
+.lp-edge-b {
+  left: 0;
+  width: 100%;
+  height: var(--bt);
+  background: repeating-linear-gradient(180deg, #f8f9fa 0 2px, #d9dce0 2px 3px);
+}
+.lp-edge-t {
+  top: calc(var(--bt) / -2);
+  transform: rotateX(90deg);
+}
+.lp-edge-b {
+  top: calc(100% - var(--bt) / 2);
+  transform: rotateX(-90deg);
+}
+
+/* ==========================================================================
+   ESCENARIO GRAFITO — dirección de arte del entorno (no toca el motor)
+   Paleta: base #292C2E · luz #74797B · medio #45494B · sombra #17191A · frío #34393A
+   ========================================================================== */
+html,
+body {
+  background: #292c2e;
+}
+.bd {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+.bd > div {
+  position: absolute;
+}
+/* 1 · Base: grafito con luz abierta arriba a la izquierda y caída a la sombra */
+.bd-base {
+  inset: 0;
+  background:
+    radial-gradient(55% 75% at 14% 22%, #5d6264 0%, #45494b 38%, rgba(52, 57, 58, 0) 72%),
+    radial-gradient(70% 80% at 72% 62%, #2a2d2f 0%, #262a2b 55%, rgba(38, 42, 43, 0) 100%),
+    linear-gradient(160deg, #3a3e40 0%, #34393a 30%, #292c2e 58%, #1f2224 100%);
+}
+/* 2 · Halo difuso superior izquierdo (la fuente de luz) */
+.bd-halo {
+  left: -18vw;
+  top: -30vh;
+  width: 70vw;
+  height: 80vh;
+  background: radial-gradient(closest-side, rgba(150, 156, 158, 0.42), rgba(116, 121, 123, 0.16) 55%, rgba(116, 121, 123, 0) 100%);
+  filter: blur(40px);
+}
+/* 3 · Arcos de luz: el borde iluminado de un gran volumen oscuro (como en la referencia) */
+.bd-arcs {
+  inset: 0;
+  -webkit-mask-image: radial-gradient(85% 95% at 16% 28%, #000 25%, rgba(0, 0, 0, 0.55) 55%, transparent 88%);
+  mask-image: radial-gradient(85% 95% at 16% 28%, #000 25%, rgba(0, 0, 0, 0.55) 55%, transparent 88%);
+}
+.bd-arc {
+  position: absolute;
+  border-radius: 50%;
+}
+/* Circunferencia que pasa por (41%,0) → (16%,30%) → (0,70%) de la pantalla */
+.bd-arc-top {
+  width: 149vw;
+  height: 149vw;
+  left: calc(67.7vw - 74.5vw);
+  top: calc(125vh - 74.5vw);
+  background:
+    radial-gradient(circle closest-side, #24272a 0%, #282b2d 82%, #2c3032 95.6%, rgba(206, 211, 214, 0.55) 98.6%, rgba(255, 255, 255, 0) 100%);
+  filter: blur(5px);
+}
+.bd-arc-top-glow {
+  width: 149vw;
+  height: 149vw;
+  left: calc(67.7vw - 74.5vw);
+  top: calc(125vh - 74.5vw);
+  background: radial-gradient(circle closest-side, rgba(0, 0, 0, 0) 90%, rgba(150, 156, 160, 0.28) 98%, rgba(150, 156, 160, 0) 100%);
+  filter: blur(26px);
+}
+.bd-arc-bottom {
+  width: 124vw;
+  height: 124vw;
+  left: calc(98vw - 62vw);
+  top: calc(196vh - 62vw);
+  background: radial-gradient(circle closest-side, rgba(0, 0, 0, 0) 96.4%, rgba(190, 196, 200, 0.22) 99%, rgba(255, 255, 255, 0) 100%);
+  filter: blur(3px);
+}
+/* 4 · Luz ambiental detrás del libro */
+.bd-behind {
+  left: 12vw;
+  top: 14vh;
+  width: 76vw;
+  height: 72vh;
+  background: radial-gradient(closest-side, rgba(116, 121, 123, 0.2), rgba(69, 73, 75, 0.1) 55%, rgba(69, 73, 75, 0) 100%);
+  filter: blur(30px);
+}
+/* 5 · Reflejo tenue sobre el piso, en la zona inferior */
+.bd-floor {
+  left: 8vw;
+  bottom: -6vh;
+  width: 84vw;
+  height: 34vh;
+  background: radial-gradient(50% 50% at 46% 62%, rgba(116, 121, 123, 0.26), rgba(116, 121, 123, 0.08) 55%, rgba(116, 121, 123, 0) 100%);
+  filter: blur(18px);
+}
+/* 6 · Logo UCAM — marca de agua clara sobre grafito */
+.bd-logo {
+  left: 50%;
+  top: 50%;
+  width: min(62vw, 1100px);
+  aspect-ratio: 171 / 71;
+  transform: translate(-50%, -46%);
+  background: #eef1f3;
+  opacity: 0.045;
+  -webkit-mask: url('./assets/logo-ucam.svg') center / contain no-repeat;
+  mask: url('./assets/logo-ucam.svg') center / contain no-repeat;
+}
+/* 7 · Viñeta: periferia y esquina superior derecha más oscuras */
+.bd-vignette {
+  inset: 0;
+  background:
+    radial-gradient(60% 55% at 92% 6%, rgba(23, 25, 26, 0.55), rgba(23, 25, 26, 0) 100%),
+    radial-gradient(125% 110% at 48% 46%, rgba(23, 25, 26, 0) 52%, rgba(23, 25, 26, 0.55) 86%, rgba(23, 25, 26, 0.8) 100%);
+}
+/* 8 · Grano fotográfico (evita bandas en los degradés) */
+.bd-grain {
+  inset: 0;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Header y barra inferior sobre grafito: sólo cambian colores */
+.tone-stage {
+  --color-paper: #1d2022;
+  --color-paper-2: #24282a;
+  --color-ink: #f2f3f4;
+  --color-ink-2: rgba(242, 243, 244, 0.94);
+  --color-stone: rgba(242, 243, 244, 0.84);
+  --color-stone-2: rgba(242, 243, 244, 0.55);
+  --color-line: rgba(242, 243, 244, 0.2);
+  --color-accent: #e3a05f;
+  color: var(--color-ink);
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Logo UCAM en portada/contratapa: el SVG es blanco → se usa como máscara y toma el color del texto */
+.ucam-mark {
+  display: block;
+  aspect-ratio: 171 / 71;
+  background: currentColor;
+  -webkit-mask: url('./assets/logo-ucam.svg') left center / contain no-repeat;
+  mask: url('./assets/logo-ucam.svg') left center / contain no-repeat;
+}
