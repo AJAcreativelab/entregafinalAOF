@@ -501,26 +501,27 @@ export const panels: PanelDef[] = [
     u: 2,
     anchor: { id: 'eval-mandibula', sub: 'eval-mandibula' },
     render: () => (
-      <Shell n="03.5" label={A.mandible.title} aside="Mandibular region" foot={['FIG. 03.5-1 · Frontal  ·  FIG. 03.5-2 · Perfil', A.mandible.lead]}>
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <h3 className="p-title">
-            Mandíbula y <span className="italic">papada</span>
-          </h3>
-          <div className="flex items-center gap-4 rounded-[3px] bg-accent-2 px-4 py-[1cqh] text-night">
-            <span className="font-display text-[clamp(2rem,5cqh,3.4rem)] leading-none">III</span>
-            <span className="t-label text-[0.75rem] leading-relaxed">
-              Clasificación de Dedo
-              <br />
-              Volumen submentoniano
-            </span>
-          </div>
-        </div>
-        <div className="mt-[2.4cqh] grid min-h-0 flex-1 grid-rows-1 grid-cols-2 gap-[1.8cqh]">
+      <Shell n="03.5" label={A.mandible.title} aside="Mandibular region" foot={['FIG. 03.5-1 · Frontal', 'FIG. 03.5-2 · Perfil']}>
+        <div className="grid min-h-0 flex-1 grid-rows-1 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.95fr)] gap-[2.4cqh]">
           <AnnotatedPhoto id="frontalSerio" figure="mandibleFrontal" tag="FIG. 03.5-1" fill />
           <AnnotatedPhoto id="perfilDerecho" figure="mandibleProfile" tag="FIG. 03.5-2" fill />
-        </div>
-        <div className="mt-[2.2cqh] shrink-0">
-          <DocConclusion>{A.mandible.conclusion}</DocConclusion>
+          <div className="flex min-h-0 flex-col pl-[0.6cqh]">
+            <h3 className="p-title">
+              Mandíbula y <span className="italic">papada</span>
+            </h3>
+            <div className="mt-[2.4cqh] flex items-center gap-4 self-start rounded-[3px] bg-accent-2 px-4 py-[1.2cqh] text-night">
+              <span className="font-display text-[clamp(2rem,5cqh,3.4rem)] leading-none">III</span>
+              <span className="t-label text-[0.75rem] leading-relaxed">
+                Clasificación de Dedo
+                <br />
+                Volumen submentoniano
+              </span>
+            </div>
+            <p className="p-text mt-[2.4cqh]">{A.mandible.lead}</p>
+            <div className="mt-auto">
+              <DocConclusion>{A.mandible.conclusion}</DocConclusion>
+            </div>
+          </div>
         </div>
       </Shell>
     ),
