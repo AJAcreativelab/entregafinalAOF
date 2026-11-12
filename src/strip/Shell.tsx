@@ -30,13 +30,15 @@ export function Shell({ n, label, aside, foot, children, className = '' }: { n?:
 export function ChapterSpine({ id }: { id: string }) {
   const s = sectionById[id]
   return (
-    <div className="p-pad flex h-full flex-col">
+    <div className="p-pad relative isolate flex h-full flex-col overflow-hidden">
       <div className="t-label flex items-baseline justify-between text-[0.84rem] text-stone">
         <span>
           <span className="text-accent">Capítulo {s.n}</span> / 08
         </span>
         <span>{s.en}</span>
       </div>
+      {/* Firma institucional: logo de la universidad, chico y arriba a la izquierda */}
+      <span className="ucam-mark mt-[3.2cqh] w-[34%] text-[#eef1f3] opacity-45" role="img" aria-label="UCAM — Universidad Católica San Antonio de Murcia" />
       <div className="mt-auto font-display text-[clamp(7rem,30cqh,22rem)] leading-[0.78] tracking-[-0.07em] text-ink">{s.n}</div>
       <h2 className="p-title mt-[3cqh]">{s.title}</h2>
       <ul className="mt-[3cqh] border-t border-line">

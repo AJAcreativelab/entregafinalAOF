@@ -67,17 +67,6 @@ function PlanSheet() {
   )
 }
 
-/* ─── 06.1 · S02 · tomas sincronizadas ──────────────────────────────────
-   Mismo recorrido de la cabeza en las dos tomas (frente → mira abajo → perfil → vuelve por el
-   frente → lado opuesto → mira abajo), pero el Momento 1 sostiene más cada pose. Se cortan esas
-   esperas para que cada giro caiga en el mismo instante. Los puntos de corte salen de comparar
-   la postura cuadro a cuadro (0,2 s) entre ambas tomas. Momento 2 solo pierde el inicio
-   (manos en el mentón, antes de empezar). */
-const SYNC_S2: [number, number][][] = [
-  [[2.6, 6.8], [8.4, 12.0], [14.6, 15.8], [16.8, 18.0], [18.2, 21.2], [23.2, 25.8]],
-  [[2.4, 18.2]],
-]
-
 /* ─── 07 comparativas ─────────────────────────────────────────────────── */
 function ComparePanel({ t, i }: { t: (typeof results.treatments)[number]; i: number }) {
   const [view, setView] = useState<CompareView>('frontal')
@@ -145,9 +134,9 @@ export const panels: PanelDef[] = [
     u: 2,
     anchor: { id: 'paciente-ficha', sub: 'paciente-ficha' },
     render: () => (
-      <Shell n="01.1" label="Ficha de la paciente" aside="Patient file" foot={['FIG. 01 — Retrato', 'Datos de consulta']}>
+      <Shell n="01.1" label="Ficha de la paciente" aside="Patient file" foot={['FIG. 01 — Historia clínica', 'Datos de consulta']}>
         <div className="grid min-h-0 flex-1 grid-rows-1 grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] gap-[3.3cqh]">
-          <Photo id="portrait" tag="FIG. 01" fill />
+          <Photo id="historiaClinica" tag="FIG. 01" fill />
           <div className="flex flex-col">
             <div className="t-label text-[0.81rem] text-stone">Paciente</div>
             <p className="p-hero mt-[1cqh] !text-[clamp(2.6rem,10cqh,8rem)]">
@@ -673,7 +662,7 @@ export const panels: PanelDef[] = [
         <Shell n={`06.1 · S0${s.n}`} label={`${s.label} — video`} aside="Registro audiovisual" foot={[`Sesión 0${s.n} / 02`, 'Video']}>
           <div className="flex min-h-0 flex-1 flex-col justify-center">
             {(s as LipoSession).synced ? (
-              <SyncedVideos ids={(s as LipoSession).synced!} tags={(s as LipoSession).synced!.map((_, i) => `S0${s.n} · Momento ${i + 1}`)} rotate={-90} clips={SYNC_S2} />
+              <SyncedVideos ids={(s as LipoSession).synced!} tags={(s as LipoSession).synced!.map((_, i) => `S0${s.n} · Momento ${i + 1}`)} />
             ) : (s as LipoSession).videos ? (
               <div className="grid min-h-0 flex-1 grid-rows-1 grid-cols-2 gap-[2cqh]">
                 {(s as LipoSession).videos!.map((v, i) => (

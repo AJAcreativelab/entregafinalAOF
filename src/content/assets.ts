@@ -44,6 +44,7 @@ const vid = (id: string, src: string, label: string, ratio = '16 / 9'): AssetSlo
 export const assets = {
   /* 00 · Portada y ficha */
   cover: img('cover', 'patient/initial/portada.jpg', 'Fotografía de portada (autorizada)', 'portrait', '4 / 5'),
+  historiaClinica: img('historiaClinica', 'patient/initial/historia-clinica.jpg', 'Historia clínica (datos personales cubiertos)', 'detail', '860 / 1180'),
   portrait: img('portrait', 'patient/initial/retrato-ficha.jpg', 'Retrato de ficha clínica', 'portrait', '4 / 5'),
 
   /* 03.1 · Protocolo fotográfico */
@@ -78,8 +79,8 @@ export const assets = {
   lipoS2b: img('lipoS2b', 'procedures/lipolysis/sesion-2-b.jpg', 'Sesión 2 — registro B', 'detail'),
   lipoS2c: img('lipoS2c', 'procedures/lipolysis/sesion-2-c.jpg', 'Sesión 2 — registro C', 'detail'),
   lipoS2v: vid('lipoS2v', 'lipolisis-sesion-2.mp4', 'Video — Sesión 2'),
-  lipoS2va: vid('lipoS2va', 'lipolisis-sesion-2-a.mp4', 'Video — Sesión 2 · Momento 1', '16 / 9'),
-  lipoS2vb: vid('lipoS2vb', 'lipolisis-sesion-2-b.mp4', 'Video — Sesión 2 · Momento 2', '16 / 9'),
+  lipoS2va: vid('lipoS2va', 'lipolisis-sesion-2-a.mp4', 'Video — Sesión 2 · Momento 1', '9 / 16'),
+  lipoS2vb: vid('lipoS2vb', 'lipolisis-sesion-2-b.mp4', 'Video — Sesión 2 · Momento 2', '9 / 16'),
   lipoEvo1: img('lipoEvo1', 'procedures/lipolysis/evolucion-1.jpg', 'Evolución — registro 1', 'profile'),
   lipoEvo2: img('lipoEvo2', 'procedures/lipolysis/evolucion-2.jpg', 'Evolución — registro 2', 'frontal'),
 
