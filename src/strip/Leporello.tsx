@@ -14,8 +14,8 @@ const D2R = Math.PI / 180
 const TH_COVER = 46 * D2R // portada en reposo
 const TH_R = 56 * D2R // páginas que esperan (pila derecha)
 const TH_L = 80 * D2R // páginas ya leídas (pila izquierda)
-const DW = 560 // ancho de diseño de una página (px)
-const DH = 760 // alto de diseño de una página (px)
+export const DW = 560 // ancho de diseño de una página (px)
+export const DH = 760 // alto de diseño de una página (px)
 const WU = 2 // ventana de lectura: 2 unidades de página planas
 const STEP = 0.8 // pantallas de scroll por unidad de página
 const TAIL = 0.7 // tramo final para cerrar el libro
@@ -437,7 +437,7 @@ export function Leporello({ panels, back }: { panels: PanelDef[]; back: () => Re
      con un fundido direccional, sin salir de la vista.
    · Al cerrar: si se volvió a la misma página, FLIP de regreso; si se navegó,
      el libro queda posicionado en la última página vista. */
-function Sheet({ panels, start, from, units, goTo, onClose }: { panels: PanelDef[]; start: number; from: DOMRect; units: number[]; goTo: (i: number) => void; onClose: () => void }) {
+export function Sheet({ panels, start, from, units, goTo, onClose }: { panels: PanelDef[]; start: number; from: DOMRect; units: number[]; goTo: (i: number) => void; onClose: () => void }) {
   const el = useRef<HTMLDivElement>(null)
   const scrim = useRef<HTMLDivElement>(null)
   const closing = useRef(false)

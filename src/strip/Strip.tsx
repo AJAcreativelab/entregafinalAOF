@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { useMediaQuery } from '../lib/hooks'
 import { StripModeCtx } from '../lib/strip'
 import { Leporello } from './Leporello'
+import { MobileLeporello } from './MobileLeporello'
 
 /* El expediente como libro plegado: en desktop, motor Leporello (ver MOTION.md);
    en móvil o con movimiento reducido, las páginas se apilan en vertical. */
@@ -22,7 +23,8 @@ export interface PanelDef {
 export function Strip({ panels, back }: { panels: PanelDef[]; back: () => ReactNode }) {
   const desktop = useMediaQuery('(min-width: 1024px)')
   const calm = useReducedMotion()
-  return desktop && !calm ? <Leporello panels={panels} back={back} /> : <VerticalStrip panels={panels} back={back} />
+  if (calm) return <VerticalStrip panels={panels} back={back} />
+  return desktop ? <Leporello panels={panels} back={back} /> : <MobileLeporello panels={panels} back={back} />
 }
 
 const toneClass = (t: PanelDef['tone']) => (t === 'night' ? 'tone-night' : t === 'bare' ? 'bg-paper' : 'bg-paper-2')
