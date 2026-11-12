@@ -77,12 +77,12 @@ export function CompareSlider({ before, after, labels = ['Antes', 'Después'], r
       >
         {/* DESPUÉS (base) */}
         <div className="absolute inset-0">
-          {a.status === 'ready' ? <img src={assetUrl(after.src)} alt={after.label} className="size-full object-cover transition-transform duration-[1.6s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.015]" draggable={false} loading="eager" /> : <Placeholder slot={after} compact />}
+          {a.status === 'ready' ? <img src={assetUrl(after.src)} alt={after.label} className="size-full object-contain" draggable={false} loading="eager" /> : <Placeholder slot={after} compact />}
         </div>
         {/* ANTES (recortado) */}
         <motion.div className="absolute inset-0" style={{ clipPath: clip }}>
           {b.status === 'ready' ? (
-            <img src={assetUrl(before.src)} alt={before.label} className="size-full object-cover transition-transform duration-[1.6s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.015]" draggable={false} loading="eager" />
+            <img src={assetUrl(before.src)} alt={before.label} className="size-full object-contain" draggable={false} loading="eager" />
           ) : (
             <div className="absolute inset-0 bg-film-2">
               <Placeholder slot={before} compact />

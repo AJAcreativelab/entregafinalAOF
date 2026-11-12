@@ -128,7 +128,7 @@ export function Photo({ id, slot: slotProp, tag, caption, guide, fit = 'natural'
                   height={st.h}
                   loading="eager"
                   decoding="async"
-                  className={`size-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} transition-transform duration-[1.6s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.015]`}
+                  className="size-full object-contain"
                 />
               </motion.button>
             ) : (
@@ -367,7 +367,7 @@ function SyncedFrame({ id, tag, ratio, fill, rotate, sideways, playing, isMaster
                 onVolumeChange={(e) => {
                   if (!e.currentTarget.muted) e.currentTarget.muted = true
                 }}
-                className="pointer-events-none absolute left-1/2 top-1/2 max-w-none object-cover"
+                className="pointer-events-none absolute left-1/2 top-1/2 max-w-none object-contain"
                 style={{
                   width: sideways ? '100cqh' : '100cqw',
                   height: sideways ? '100cqw' : '100cqh',
