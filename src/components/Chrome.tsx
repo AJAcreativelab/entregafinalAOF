@@ -60,9 +60,7 @@ export function ProgressRail() {
           {hint || '·'}
         </span>
         <div className="pointer-events-auto t-label flex min-w-80 items-center justify-end gap-4 whitespace-nowrap text-[0.7rem] text-stone">
-          <span className="mr-3">
-            Web desarrollada por <span className="text-ink">@ajacreativelab</span> — Lab Creativo
-          </span>
+          <span className="mr-3 text-[0.56rem] tracking-[0.1em] text-stone-2 opacity-60">Web desarrollada por @ajacreativelab — Lab Creativo</span>
           {presenting && <span className="text-accent">● Presentando</span>}
           <button onClick={prev} aria-label="Anterior" className="px-1 text-[0.94rem] hover:text-ink">←</button>
           <span className="t-data text-[0.78rem]">{String(Math.round(p * 100)).padStart(3, '0')}%</span>
