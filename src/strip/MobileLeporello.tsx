@@ -15,7 +15,6 @@ import type { PanelDef } from './Strip'
 const STEP = 0.72 // pantallas de scroll por página
 const TAU = 0.09 // inercia del progreso (s)
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v))
-const isInteractive = (el: EventTarget | null) => el instanceof Element && !!el.closest('button, a, input, video, [role="slider"], [role="tab"]')
 
 function useViewport() {
   const [v, setV] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }))
@@ -108,7 +107,9 @@ export function MobileLeporello({ panels, back }: { panels: PanelDef[]; back: ()
     window.scrollTo({ top: top + i * step, behavior: 'instant' })
   }
   const onClick = (i: number, e: MouseEvent) => {
-    if (i !== cur || i >= panels.length || isInteractive(e.target)) return
+    if (i !== cur || i >= panels.length) return
+    e.preventDefault()
+    e.stopPropagation()
     const el = pages.current[i]
     if (el) setSheet({ i, from: el.getBoundingClientRect() })
   }
@@ -140,7 +141,7 @@ export function MobileLeporello({ panels, back }: { panels: PanelDef[]; back: ()
                   ref={(el) => {
                     pages.current[i] = el
                   }}
-                  onClick={(e) => onClick(i, e)}
+                  onClickCapture={(e) => onClick(i, e)}
                   className={`lp-page pointer-events-auto absolute ${p.tone === 'night' ? 'tone-night lp-dark' : p.tone === 'bare' ? 'lp-bare' : ''} ${i % 2 ? 'lp-even' : ''}`}
                   style={{
                     left: (vw - g.w) / 2,

@@ -263,8 +263,10 @@ export function SyncedVideos({ ids, tags, rotate = 0, ratio = '9 / 16', clips }:
     return () => cancelAnimationFrame(raf)
   }, [playing, total])
 
+  // Decide por el estado REAL del video (el navegador puede pausarlo solo): un clic siempre hace lo esperado
   const toggle = () => {
-    if (playing) {
+    const mv = refs.current[masterIdx]
+    if (mv && !mv.paused) {
       refs.current.forEach((v) => v?.pause())
       setPlaying(false)
       return
@@ -297,6 +299,7 @@ export function SyncedVideos({ ids, tags, rotate = 0, ratio = '9 / 16', clips }:
             fill={mode === 'h'}
             rotate={rotate}
             sideways={sideways}
+            playing={playing}
             onRef={(el) => (refs.current[i] = el)}
             onMeta={(el) => {
               setDurs((d) => {
@@ -307,6 +310,8 @@ export function SyncedVideos({ ids, tags, rotate = 0, ratio = '9 / 16', clips }:
               el.currentTime = srcAt(i, 0)
             }}
             onClick={toggle}
+            onPausedByBrowser={() => setPlaying(false)}
+            isMaster={i === masterIdx}
           />
         ))}
       </div>
@@ -327,14 +332,27 @@ export function SyncedVideos({ ids, tags, rotate = 0, ratio = '9 / 16', clips }:
   )
 }
 
-function SyncedFrame({ id, tag, ratio, fill, rotate, sideways, onRef, onMeta, onClick }: { id: string; tag?: string; ratio: string; fill: boolean; rotate: number; sideways: boolean; onRef: (el: HTMLVideoElement | null) => void; onMeta: (el: HTMLVideoElement) => void; onClick: () => void }) {
+function SyncedFrame({ id, tag, ratio, fill, rotate, sideways, playing, isMaster, onPausedByBrowser, onRef, onMeta, onClick }: { id: string; tag?: string; ratio: string; fill: boolean; rotate: number; sideways: boolean; playing: boolean; isMaster: boolean; onPausedByBrowser: () => void; onRef: (el: HTMLVideoElement | null) => void; onMeta: (el: HTMLVideoElement) => void; onClick: () => void }) {
   const slot = getSlot(id)!
   const st = useAsset(slot)
   return (
     <figure className={fill ? 'flex h-full min-h-0 flex-col' : ''}>
       <FitBox ratio={ratio} active={fill}>
         {(style) => (
-          <div className="relative overflow-hidden bg-film [container-type:size]" style={style}>
+          <div
+            className="group/sv relative cursor-pointer overflow-hidden bg-film [container-type:size]"
+            style={style}
+            role="button"
+            tabIndex={0}
+            aria-label={playing ? 'Pausar ambas tomas' : 'Reproducir ambas tomas'}
+            onClick={onClick}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onClick()
+              }
+            }}
+          >
             {st.status === 'ready' ? (
               <video
                 ref={onRef}
@@ -343,11 +361,13 @@ function SyncedFrame({ id, tag, ratio, fill, rotate, sideways, onRef, onMeta, on
                 playsInline
                 preload="auto"
                 onLoadedMetadata={(e) => onMeta(e.currentTarget)}
+                onPause={(e) => {
+                  if (isMaster && !e.currentTarget.seeking) onPausedByBrowser()
+                }}
                 onVolumeChange={(e) => {
                   if (!e.currentTarget.muted) e.currentTarget.muted = true
                 }}
-                onClick={onClick}
-                className="absolute left-1/2 top-1/2 max-w-none cursor-pointer object-cover"
+                className="pointer-events-none absolute left-1/2 top-1/2 max-w-none object-cover"
                 style={{
                   width: sideways ? '100cqh' : '100cqw',
                   height: sideways ? '100cqw' : '100cqh',
@@ -358,6 +378,16 @@ function SyncedFrame({ id, tag, ratio, fill, rotate, sideways, onRef, onMeta, on
               <Placeholder slot={slot} />
             )}
             {tag && <span className="t-label pointer-events-none absolute left-4 top-4 text-[0.86rem] text-annot/80 annot-shadow">{tag}</span>}
+            {/* Botón grande al centro: toda la toma es zona de clic */}
+            <span
+              className={'pointer-events-none absolute left-1/2 top-1/2 grid size-[clamp(3.2rem,16cqw,5.5rem)] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-black/45 text-annot ring-1 ring-annot/60 backdrop-blur-sm transition-opacity duration-300 ' + (playing ? 'opacity-0 group-hover/sv:opacity-80' : 'opacity-100')}
+            >
+              {playing ? (
+                <svg width="18" height="20" viewBox="0 0 12 14" aria-hidden><path d="M2 1v12M10 1v12" stroke="currentColor" strokeWidth="2" /></svg>
+              ) : (
+                <svg width="20" height="22" viewBox="0 0 12 14" aria-hidden><path d="M2 1 L11 7 L2 13 Z" fill="currentColor" /></svg>
+              )}
+            </span>
           </div>
         )}
       </FitBox>

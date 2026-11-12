@@ -50,7 +50,6 @@ function useViewport() {
   return v
 }
 
-const isInteractive = (el: EventTarget | null) => el instanceof Element && !!el.closest('button, a, input, video, [role="slider"], [role="tab"]')
 
 export function Leporello({ panels, back }: { panels: PanelDef[]; back: () => ReactNode }) {
   const { w: vw, h: vh } = useViewport()
@@ -356,9 +355,12 @@ export function Leporello({ panels, back }: { panels: PanelDef[]; back: () => Re
     if (S.current.hovIdx === i) S.current.hovIdx = -1
     wake()
   }
+  // Clic en cualquier parte de la página (también sobre fotos, videos o botones) = abrirla al frente.
+  // Los controles internos se usan ya con la página ampliada. Se captura antes que los hijos.
   const onClick = (i: number, e: MouseEvent) => {
-    // Todas las páginas se pueden ampliar (modo diapositivas); los controles internos no disparan
-    if (S.current.mode !== 'read' || isInteractive(e.target)) return
+    if (S.current.mode !== 'read') return
+    e.preventDefault()
+    e.stopPropagation()
     const el = pages.current[i]
     if (el) setSheet({ i, from: el.getBoundingClientRect() })
   }
@@ -396,7 +398,7 @@ export function Leporello({ panels, back }: { panels: PanelDef[]; back: () => Re
                 }}
                 onPointerEnter={() => onEnter(i)}
                 onPointerLeave={() => onLeave(i)}
-                onClick={(e) => onClick(i, e)}
+                onClickCapture={(e) => onClick(i, e)}
                 className={`lp-page absolute left-0 ${p.tone === 'night' ? 'tone-night lp-dark' : p.tone === 'bare' ? 'lp-bare' : ''} ${i % 2 ? 'lp-even' : ''} cursor-pointer`}
                 style={{ top: g.top, width: g.w[i] + 0.6, height: g.ph }}
               >

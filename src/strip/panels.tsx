@@ -3,9 +3,9 @@ import { useState } from 'react'
 import { AnnotatedPhoto } from '../components/AnnotatedPhoto'
 import { CompareSlider } from '../components/CompareSlider'
 import { Photo, SyncedVideos, Video } from '../components/Media'
-import { PendingTag, PendingText } from '../components/Pending'
+import { PendingTag } from '../components/Pending'
 import { comparePair, compareViews, finalPair, type CompareView } from '../content/assets'
-import { assessment as A, conclusions, diagnosis, history, lipolysis as L, meta, patient, plan, prp as PRP, results, rhino as R, type LipoSession } from '../content/case'
+import { assessment as A, diagnosis, history, lipolysis as L, meta, patient, plan, prp as PRP, results, rhino as R, type LipoSession } from '../content/case'
 import { ICONS, NoseScheme, SessionCard, Syringe, TechniqueGlyph } from '../components/Graphics'
 import { ChapterSpine, DocConclusion, Obs, Row, Shell } from './Shell'
 import type { PanelDef } from './Strip'
@@ -678,42 +678,6 @@ export const panels: PanelDef[] = [
     },
   ]),
   {
-    key: 'lipo-progresion',
-    u: 1,
-    tone: 'night',
-    render: () => {
-      const [s1, s2] = L.sessions
-      return (
-        <Shell n="06.1" label="Progresión de dosis" aside="1.ª → 2.ª" foot={[`S1 ${s1.totalDocumented.label}`, `S2 ${s2.totalDocumented.label}`]}>
-          <h3 className="p-title">
-            Dosis <span className="italic">por sesión</span>
-          </h3>
-          {/* Texto tal cual lo indicó la autora, organizado por sesión */}
-          <div className="mt-[2.4cqh] flex min-h-0 flex-1 flex-col justify-evenly gap-[2cqh]">
-            {[
-              { title: '1era sesión', doses: [['Lipasa', '1,5 ml'], ['Colagenasa', '0,75ml'], ['Hialuronidasa', '0,75 ml']], total: 'Total aplicado: 2,75 ml.', dist: '1,5ml en la papada y 0,75ml en cada jowl.' },
-              { title: '2da sesión', doses: [['Lipasa', '3 ml'], ['Colagenasa', '1,5 ml'], ['Hialuronidasa', '1,5  ml']], total: 'Total aplicado: 6 ml.', dist: '3 ml en la papada y 1,5ml en cada jowl.' },
-            ].map((s, k) => (
-              <section key={s.title} className="border-t border-line pt-[1.6cqh]">
-                <div className={`p-sub mb-[1cqh] ${k ? 'text-accent-2' : 'text-ink'}`}>{s.title}</div>
-                <ul>
-                  {s.doses.map(([n, v]) => (
-                    <li key={n} className="flex items-baseline justify-between gap-3 py-[0.5cqh]">
-                      <span className="text-[clamp(1.15rem,2.7cqh,1.7rem)] text-ink">{n}:</span>
-                      <span className="t-data text-[clamp(1.15rem,2.7cqh,1.7rem)] text-ink">{v}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-[1.2cqh] text-[clamp(1.15rem,2.7cqh,1.7rem)] font-medium text-ink">{s.total}</p>
-                <p className="p-text mt-[0.4cqh]">{s.dist}</p>
-              </section>
-            ))}
-          </div>
-        </Shell>
-      )
-    },
-  },
-  {
     key: 'prp',
     u: 2,
     anchor: { id: 'proc-prp', sub: 'proc-prp' },
@@ -909,17 +873,20 @@ export const panels: PanelDef[] = [
     u: 2,
     anchor: { id: 'conclusiones-final', sub: 'conclusiones-final' },
     render: () => (
-      <Shell n="08.1" label="Consideraciones finales" aside="Dra. Jeanily Berné" foot={['Espacio reservado para las conclusiones reales', '4 apartados']}>
-        <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-x-[3.6cqh] gap-y-[3cqh]">
-          {conclusions.map((c, i) => (
-            <div key={c.key} className="flex flex-col border-t border-ink pt-[1.6cqh]">
-              <div className="flex items-baseline gap-3">
-                <span className="t-data text-[0.95rem] text-accent">0{i + 1}</span>
-                <h4 className="p-sub">{c.title}</h4>
-              </div>
-              <div className="mt-auto">{c.value ? <p className="p-text">{c.value}</p> : <PendingText label="Conclusión pendiente" lines={3} />}</div>
+      <Shell n="08.1" label="Consideraciones finales" aside="Caso clínico integral" foot={['Especialidad en Armonización Orofacial', 'UCAM · AOF']}>
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
+          <span className="t-label text-[0.86rem] text-accent">08</span>
+          <h3 className="mt-[2cqh] font-serif text-[clamp(4rem,19cqh,15rem)] font-normal italic leading-[0.9] tracking-[-0.03em] text-ink">Conclusiones</h3>
+          <div className="mt-[6cqh] grid w-full max-w-[46rem] grid-cols-2 border-t border-line pt-[2.4cqh]">
+            <div>
+              <div className="t-label text-[0.81rem] text-stone">Paciente</div>
+              <div className="p-sub mt-[1cqh]">{meta.patient}</div>
             </div>
-          ))}
+            <div className="border-l border-line">
+              <div className="t-label text-[0.81rem] text-stone">Presentado por</div>
+              <div className="p-sub mt-[1cqh]">{meta.presenter}</div>
+            </div>
+          </div>
         </div>
       </Shell>
     ),
@@ -927,4 +894,8 @@ export const panels: PanelDef[] = [
 ]
 
 /** Contratapa del libro cerrado (fin del expediente) */
-export const backCover = () => <CoverPage />
+export const backCover = () => (
+  <div className="tone-night h-full bg-[#18191b] text-ink">
+    <CoverPage />
+  </div>
+)
